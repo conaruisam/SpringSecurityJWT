@@ -43,7 +43,7 @@ public class PrincipalController {
                 .username(requestDTO.getUsername())
                 .password(requestDTO.getPassword())
                 .email(requestDTO.getEmail())
-                //.roles(roles)
+                .roles(roles)
                 .build();
 
         userRepository.save(userEntity);
