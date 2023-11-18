@@ -24,15 +24,15 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable) // Seguridad de formularios.
                 .authorizeHttpRequests( auth -> {
-                    auth.requestMatchers("/hello").permitAll();
-                    auth.anyRequest().authenticated();
+                    auth.requestMatchers("/hello").permitAll(); // Este endpoint sería público
+                    auth.anyRequest().authenticated(); // Mientras que el resto necesitaría autenticación
                 })
-                .sessionManagement(ses -> {
+                .sessionManagement(ses -> { // No hay sesión
                     ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-                .httpBasic(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults()) // El logeo basic está activado.
                 .build();
     }
 
@@ -58,7 +58,9 @@ public class SecurityConfig {
     AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder) throws Exception {
         return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(userDetailsService())
-                .passwordEncoder(passwordEncoder).and().build();
+                .passwordEncoder(passwordEncoder)
+                .and()
+                .build();
 
     }
 
