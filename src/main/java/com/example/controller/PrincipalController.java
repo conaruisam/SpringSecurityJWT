@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @RestController
 public class PrincipalController {
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepository userRepository;
 
@@ -30,6 +34,7 @@ public class PrincipalController {
     }
 
     @PostMapping("/createUser")
+    @PreAuthorize("hasRole('ADMIN')")
     // El valid es que se valide que los campos sean correctos.
     public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserDTO requestDTO) {
 
@@ -41,7 +46,7 @@ public class PrincipalController {
 
         UserEntity userEntity = UserEntity.builder()
                 .username(requestDTO.getUsername())
-                .password(requestDTO.getPassword())
+                .password(passwordEncoder.encode(requestDTO.getPassword()))
                 .email(requestDTO.getEmail())
                 .roles(roles)
                 .build();
